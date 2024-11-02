@@ -11,6 +11,7 @@
   "dependencies": {
     "docx-pdf": "^0.0.1",
     "easy-template-x": "^4.1.1",
+    "formidable": "^3.5.2",
     "next": "15.0.0",
     "pdf-lib": "^1.17.1",
     "react": "19.0.0-rc-65a56d0e-20241020",

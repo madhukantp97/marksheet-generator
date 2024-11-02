@@ -1,18 +1,25 @@
-// pages/generate.js
 import { useState } from 'react';
 
 export default function GeneratePage() {
     const [isGenerating, setIsGenerating] = useState(false);
+    const [templateFile, setTemplateFile] = useState(null);
+
+    const handleFileChange = (event) => {
+        setTemplateFile(event.target.files[0]);
+    };
 
     const generateDocument = async () => {
+        if (!templateFile) {
+            alert('Please select a template file.');
+            return;
+        }
+
         setIsGenerating(true);
-        const response = await fetch('/api/generate-docx', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                details: [
+
+        const formData = new FormData();
+        formData.append('template', templateFile);
+        formData.append('data', JSON.stringify({
+            details: [
                     { student: 'Alon Bar',  fathername:'john wick',   mothername:'alexa wick',   class:'1st',  dob:'01/01/2021', rollno:'754',attendance:'100',english: '25' , hindi: '46', maths: '12', gk:'48',drawing:'75',scholar_no:'123457',family_id:'245465'},
                     { student: 'Alon Bar2', fathername:'john wick2',  mothername:'alexa wick2',  class:'2nd',  dob:'01/01/2046', rollno:'455',attendance:'101',english: '95' , hindi: '42', maths: '18', gk:'38',drawing:'73',scholar_no:'123457',family_id:'245465'},
                     { student: 'Alon Bar3', fathername:'john wick3',  mothername:'alexa wick3',  class:'3rd',  dob:'01/01/2024', rollno:'145',attendance:'102',english: '85' , hindi: '41', maths: '78', gk:'28',drawing:'87',scholar_no:'123457',family_id:'245465'},
@@ -23,8 +30,13 @@ export default function GeneratePage() {
                     { student: 'Alon Bar8', fathername:'john wick8',  mothername:'alexa wick8',  class:'8th',  dob:'01/01/2075', rollno:'267',attendance:'107',english: '54' , hindi: '86', maths: '98', gk:'35',drawing:'54',scholar_no:'123457',family_id:'245465'},
                     { student: 'Alon Bar9', fathername:'john wick9',  mothername:'alexa wick9',  class:'9th',  dob:'01/01/2071', rollno:'289',attendance:'108',english: '45' , hindi: '75', maths: '73', gk:'76',drawing:'37',scholar_no:'123457',family_id:'245465'},
                     { student: 'Alon Bar10',fathername:'john wick10', mothername:'alexa wick10', class:'10th', dob:'01/01/2034', rollno:'287',attendance:'109',english: '34' , hindi: '49', maths: '74', gk:'60',drawing:'54',scholar_no:'123457',family_id:'245465'},
-                ]
-            }),
+
+            ]
+        }));
+
+        const response = await fetch('/api/generate-docx', {
+            method: 'POST',
+            body: formData,
         });
 
         if (response.ok) {
@@ -45,6 +57,7 @@ export default function GeneratePage() {
     return (
         <div>
             <h1>Generate Document</h1>
+            <input type="file" accept=".docx" onChange={handleFileChange} />
             <button onClick={generateDocument} disabled={isGenerating}>
                 {isGenerating ? 'Generating...' : 'Generate DOCX'}
             </button>
